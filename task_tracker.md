@@ -17,11 +17,11 @@
 ---
 
 ## Phase 2: Environment Setup & Infrastructure
-- [ ] **Task 2.1:** Create and verify `docker-compose.yml` (PostgreSQL 16 + Redis 7 + health checks). 🔴
-- [ ] **Task 2.2:** Initialize Laravel 12 API backend with PHP 8.4 and strict typing. 🔴
-- [ ] **Task 2.3:** Configure PostgreSQL and Redis connections inside Laravel `.env`. 🔴
-- [ ] **Task 2.4:** Build and test initial database migrations with all Foreign Keys & Check Constraints. 🔴
-- [ ] **Task 2.5:** Create API health check endpoint (`/api/v1/health`) verifying DB and Redis ping. 🔴
+- [x] **Task 2.1:** Create and verify `docker-compose.yml` (PostgreSQL 16 + Redis 7 + health checks). 🔴
+- [x] **Task 2.2:** Initialize Laravel 12 API backend with PHP 8.4 and strict typing. 🔴
+- [x] **Task 2.3:** Configure PostgreSQL and Redis connections inside Laravel `.env`. 🔴
+- [x] **Task 2.4:** Build and test initial database migrations with all Foreign Keys & Check Constraints. 🔴
+- [x] **Task 2.5:** Create API health check endpoint (`/api/v1/health`) verifying DB and Redis ping. 🔴
 
 ---
 
