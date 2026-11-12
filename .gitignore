@@ -1,0 +1,31 @@
+# Dependencies
+/backend/vendor/
+/backend/node_modules/
+node_modules/
+
+# Environment files
+/backend/.env
+/backend/.env.backup
+/backend/.env.production
+.env
+
+# Storage and logs
+/backend/storage/*.key
+/backend/storage/logs/
+/backend/storage/framework/cache/
+/backend/storage/framework/sessions/
+/backend/storage/framework/views/
+
+# SQLite files
+*.sqlite
+*.sqlite-journal
+
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Docker volumes / local data
+postgres_data/
+redis_data/
