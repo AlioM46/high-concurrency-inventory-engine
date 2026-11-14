@@ -28,6 +28,7 @@
 ## Phase 3: The Concurrency Reservation Engine (Core)
 - [x] **Task 3.1:** Implement Standard API Architecture (`ApiResponse` Trait) & Core Read APIs (Products, Warehouses, Inventory). 🟢
 - [x] **Task 3.2:** Implement Double-Entry `StockMovement` ledger service (`StockMovementService`) with row-level pessimistic locking (`lockForUpdate`). 🟢
+- [ ] **Task 3.2.1:** Enhance `StockMovementService` with Ledger-level Idempotency (prevent duplicate reservation/order deductions) & Deadlock transaction retries (`attempts: 3`). 🔴
 - [ ] **Task 3.3:** Build Stock Inward/Adjustment API with ledger tracking (`POST /api/v1/inventory/adjustments`). 🔴
 - [ ] **Task 3.4:** Implement Concurrency Strategy A: Pessimistic Locking (`lockForUpdate` with deterministic sorted ID locks). 🔴
 - [ ] **Task 3.5:** Implement Concurrency Strategy B: Atomic Conditional Update (`UPDATE ... WHERE available >= qty`). 🔴
