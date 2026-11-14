@@ -4,10 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\ProductWarehouse;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class DatabaseConstraintTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_health_check_endpoint_returns_ok(): void
     {
         $response = $this->getJson('/api/v1/health');
@@ -20,6 +23,8 @@ class DatabaseConstraintTest extends TestCase
 
     public function test_database_constraint_blocks_negative_available_quantity(): void
     {
+        $this->seed();
+
         $this->expectException(QueryException::class);
 
         $pw = ProductWarehouse::first();

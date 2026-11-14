@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('reserved_delta')->default(0);
             $table->integer('sold_delta')->default(0);
             $table->string('reference_type', 50)->nullable();
-            $table->uuid('reference_id')->nullable();
+            $table->string('reference_id', 255)->nullable();
             $table->string('reason')->nullable();
             $table->string('created_by')->nullable();
             $table->timestamp('created_at')->useCurrent()->index();
