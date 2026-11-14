@@ -17,22 +17,23 @@
 ---
 
 ## Phase 2: Environment Setup & Infrastructure
-- [x] **Task 2.1:** Create and verify `docker-compose.yml` (PostgreSQL 16 + Redis 7 + health checks). 🔴
-- [x] **Task 2.2:** Initialize Laravel 12 API backend with PHP 8.4 and strict typing. 🔴
-- [x] **Task 2.3:** Configure PostgreSQL and Redis connections inside Laravel `.env`. 🔴
-- [x] **Task 2.4:** Build and test initial database migrations with all Foreign Keys & Check Constraints. 🔴
-- [x] **Task 2.5:** Create API health check endpoint (`/api/v1/health`) verifying DB and Redis ping. 🔴
+- [x] **Task 2.1:** Create and verify `docker-compose.yml` (PostgreSQL 16 + Redis 7 + health checks). 🟢
+- [x] **Task 2.2:** Initialize Laravel 12 API backend with PHP 8.4 and strict typing. 🟢
+- [x] **Task 2.3:** Configure PostgreSQL and Redis connections inside Laravel `.env`. 🟢
+- [x] **Task 2.4:** Build and test initial database migrations with all Foreign Keys & Check Constraints. 🟢
+- [x] **Task 2.5:** Create API health check endpoint (`/api/v1/health`) verifying DB and Redis ping. 🟢
 
 ---
 
 ## Phase 3: The Concurrency Reservation Engine (Core)
-- [ ] **Task 3.1:** Implement Double-Entry `StockMovement` ledger service. 🔴
-- [ ] **Task 3.2:** Build Stock Inward/Adjustment API with ledger tracking. 🔴
-- [ ] **Task 3.3:** Implement Concurrency Strategy A: Pessimistic Locking (`lockForUpdate` with sorted ID locks). 🔴
-- [ ] **Task 3.4:** Implement Concurrency Strategy B: Atomic Conditional Update (`UPDATE ... WHERE available >= qty`). 🔴
-- [ ] **Task 3.5:** Implement `IdempotencyMiddleware` supporting `Idempotency-Key` and request payload hashing. 🔴
-- [ ] **Task 3.6:** Implement Reservation Expiry Queue Job (Redis delayed dispatch for 10-minute TTL). 🔴
-- [ ] **Task 3.7:** Write Pest unit & integration tests for single-unit and multi-unit reservation claims. 🔴
+- [x] **Task 3.1:** Implement Standard API Architecture (`ApiResponse` Trait) & Core Read APIs (Products, Warehouses, Inventory). 🟢
+- [x] **Task 3.2:** Implement Double-Entry `StockMovement` ledger service (`StockMovementService`) with row-level pessimistic locking (`lockForUpdate`). 🟢
+- [ ] **Task 3.3:** Build Stock Inward/Adjustment API with ledger tracking (`POST /api/v1/inventory/adjustments`). 🔴
+- [ ] **Task 3.4:** Implement Concurrency Strategy A: Pessimistic Locking (`lockForUpdate` with deterministic sorted ID locks). 🔴
+- [ ] **Task 3.5:** Implement Concurrency Strategy B: Atomic Conditional Update (`UPDATE ... WHERE available >= qty`). 🔴
+- [ ] **Task 3.6:** Implement `IdempotencyMiddleware` supporting `Idempotency-Key` and request payload hashing. 🔴
+- [ ] **Task 3.7:** Implement Reservation Expiry Queue Job (Redis delayed dispatch for 10-minute TTL). 🔴
+- [ ] **Task 3.8:** Write Pest/PHPUnit unit & integration tests for single-unit and multi-unit reservation claims under concurrency. 🔴
 
 ---
 
