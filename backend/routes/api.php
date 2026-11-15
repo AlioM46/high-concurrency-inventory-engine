@@ -19,4 +19,5 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/inventory', [InventoryController::class, 'index']);
     Route::get('/inventory/product/{productId}', [InventoryController::class, 'showByProduct']);
+    Route::post('/inventory/adjustments', [InventoryController::class, 'adjust']);
 });

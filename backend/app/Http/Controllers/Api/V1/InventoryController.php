@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateStockAdjustmentRequest;
 use App\Http\Resources\InventoryResource;
+use App\Http\Resources\StockMovementResource;
 use App\Models\Product;
 use App\Models\ProductWarehouse;
+use App\Services\StockMovementService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -76,5 +79,28 @@ class InventoryController extends Controller
                 'sold_quantity' => $item->sold_quantity,
             ]),
         ], 'Product stock aggregated successfully.');
+    }
+
+    /**
+     * Record a manual stock adjustment or inward receipt into the ledger.
+     */
+    public function adjust(
+        CreateStockAdjustmentRequest $request,
+        StockMovementService $stockService
+    ): JsonResponse {
+        $movement = $stockService->recordAdjustment(
+            productWarehouse: $request->validated('product_warehouse_id'),
+            quantityDelta: (int) $request->validated('quantity_delta'),
+            reason: $request->validated('reason'),
+            actor: $request->validated('actor', 'warehouse_operator'),
+        );
+
+        $movement->load('productWarehouse');
+
+        return $this->successResponse(
+            new StockMovementResource($movement),
+            'Inventory adjusted and recorded in ledger successfully.',
+            201
+        );
     }
 }
