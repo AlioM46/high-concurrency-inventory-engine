@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
+use App\Services\AtomicUpdateReservationService;
 use App\Services\PessimisticLockReservationService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -26,6 +27,22 @@ class ReservationController extends Controller
         return $this->successResponse(
             new ReservationResource($reservation),
             'Reservation created successfully using pessimistic locking strategy.',
+            201
+        );
+    }
+
+    /**
+     * Create a reservation using Strategy B (Atomic Conditional Update).
+     */
+    public function storeAtomic(
+        CreateReservationRequest $request,
+        AtomicUpdateReservationService $service
+    ): JsonResponse {
+        $reservation = $service->create($request->validated());
+
+        return $this->successResponse(
+            new ReservationResource($reservation),
+            'Reservation created successfully using atomic update strategy.',
             201
         );
     }

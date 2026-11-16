@@ -24,5 +24,6 @@ Route::prefix('v1')->group(function () {
 
     // Step 5: Reservation Endpoints
     Route::post('/reservations/pessimistic', [ReservationController::class, 'storePessimistic']);
+    Route::post('/reservations/atomic', [ReservationController::class, 'storeAtomic']);
     Route::get('/reservations/{id}', [ReservationController::class, 'show']);
 });
