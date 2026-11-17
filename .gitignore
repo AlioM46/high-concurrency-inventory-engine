@@ -23,6 +23,7 @@ node_modules/
 # IDE & OS
 .idea/
 .vscode/
+.kilo/
 .DS_Store
 Thumbs.db
 

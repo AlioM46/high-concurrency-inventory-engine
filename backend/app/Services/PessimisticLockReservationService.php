@@ -26,6 +26,7 @@ class PessimisticLockReservationService implements ReservationServiceInterface
             ->all();
 
         // 2. Resolve organization_id (from input or from the first product warehouse)
+        // Null Coalescing Operator
         $organizationId = $data['organization_id'] ?? null;
         if (! $organizationId) {
             $firstPw = ProductWarehouse::select('organization_id')

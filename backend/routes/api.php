@@ -20,10 +20,10 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/inventory', [InventoryController::class, 'index']);
     Route::get('/inventory/product/{productId}', [InventoryController::class, 'showByProduct']);
-    Route::post('/inventory/adjustments', [InventoryController::class, 'adjust']);
+    Route::post('/inventory/adjustments', [InventoryController::class, 'adjust'])->middleware('idempotent');
 
     // Step 5: Reservation Endpoints
-    Route::post('/reservations/pessimistic', [ReservationController::class, 'storePessimistic']);
-    Route::post('/reservations/atomic', [ReservationController::class, 'storeAtomic']);
+    Route::post('/reservations/pessimistic', [ReservationController::class, 'storePessimistic'])->middleware('idempotent');
+    Route::post('/reservations/atomic', [ReservationController::class, 'storeAtomic'])->middleware('idempotent');
     Route::get('/reservations/{id}', [ReservationController::class, 'show']);
 });

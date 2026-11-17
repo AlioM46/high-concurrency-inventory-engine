@@ -8,6 +8,7 @@ use App\Models\ProductWarehouse;
 use App\Models\StockMovement;
 use App\Models\Warehouse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class InventoryAdjustmentTest extends TestCase
@@ -62,7 +63,9 @@ class InventoryAdjustmentTest extends TestCase
             'actor' => 'warehouse_supervisor',
         ];
 
-        $response = $this->postJson('/api/v1/inventory/adjustments', $payload);
+        $response = $this->postJson('/api/v1/inventory/adjustments', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
@@ -95,7 +98,9 @@ class InventoryAdjustmentTest extends TestCase
             'actor' => 'auditor_01',
         ];
 
-        $response = $this->postJson('/api/v1/inventory/adjustments', $payload);
+        $response = $this->postJson('/api/v1/inventory/adjustments', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
@@ -116,7 +121,9 @@ class InventoryAdjustmentTest extends TestCase
             'reason' => 'Attempted write-off exceeding available balance',
         ];
 
-        $response = $this->postJson('/api/v1/inventory/adjustments', $payload);
+        $response = $this->postJson('/api/v1/inventory/adjustments', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(422)
             ->assertJsonPath('success', false)
@@ -134,6 +141,8 @@ class InventoryAdjustmentTest extends TestCase
         // 1. Missing required fields and delta = 0
         $response = $this->postJson('/api/v1/inventory/adjustments', [
             'quantity_delta' => 0,
+        ], [
+            'Idempotency-Key' => (string) Str::uuid(),
         ]);
 
         $response->assertStatus(422)
@@ -144,6 +153,8 @@ class InventoryAdjustmentTest extends TestCase
             'product_warehouse_id' => '00000000-0000-0000-0000-000000000000',
             'quantity_delta' => 5,
             'reason' => 'Valid reason',
+        ], [
+            'Idempotency-Key' => (string) Str::uuid(),
         ]);
 
         $responseNonExistent->assertStatus(422)

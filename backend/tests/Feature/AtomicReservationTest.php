@@ -10,6 +10,7 @@ use App\Models\StockMovement;
 use App\Models\Warehouse;
 use App\Services\AtomicUpdateReservationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AtomicReservationTest extends TestCase
@@ -91,7 +92,9 @@ class AtomicReservationTest extends TestCase
             'expires_in_minutes' => 10,
         ];
 
-        $response = $this->postJson('/api/v1/reservations/atomic', $payload);
+        $response = $this->postJson('/api/v1/reservations/atomic', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
@@ -138,7 +141,9 @@ class AtomicReservationTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/v1/reservations/atomic', $payload);
+        $response = $this->postJson('/api/v1/reservations/atomic', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
@@ -174,7 +179,9 @@ class AtomicReservationTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/v1/reservations/atomic', $payload);
+        $response = $this->postJson('/api/v1/reservations/atomic', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(422)
             ->assertJsonPath('success', false)

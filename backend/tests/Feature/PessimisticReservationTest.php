@@ -10,6 +10,7 @@ use App\Models\StockMovement;
 use App\Models\Warehouse;
 use App\Services\PessimisticLockReservationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class PessimisticReservationTest extends TestCase
@@ -91,7 +92,9 @@ class PessimisticReservationTest extends TestCase
             'expires_in_minutes' => 10,
         ];
 
-        $response = $this->postJson('/api/v1/reservations/pessimistic', $payload);
+        $response = $this->postJson('/api/v1/reservations/pessimistic', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
@@ -138,7 +141,9 @@ class PessimisticReservationTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/v1/reservations/pessimistic', $payload);
+        $response = $this->postJson('/api/v1/reservations/pessimistic', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
@@ -174,7 +179,9 @@ class PessimisticReservationTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/v1/reservations/pessimistic', $payload);
+        $response = $this->postJson('/api/v1/reservations/pessimistic', $payload, [
+            'Idempotency-Key' => (string) Str::uuid(),
+        ]);
 
         $response->assertStatus(422)
             ->assertJsonPath('success', false)

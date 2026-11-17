@@ -3,6 +3,13 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
+
+// 1. Loads Composer's autoloader.
+// 2. Loads the Laravel application.
+// 3. Captures the incoming HTTP request.
+// 4. Hands the request to Laravel for handling.
+
+
 define('LARAVEL_START', microtime(true));
 
 // Determine if the application is in maintenance mode...
