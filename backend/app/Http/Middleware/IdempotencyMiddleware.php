@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\IdempotencyKey;
 use App\Models\Organization;
 use App\Models\ProductWarehouse;
+use App\Models\Reservation;
 use Closure;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -189,6 +190,15 @@ class IdempotencyMiddleware
 
         if ($orgId && Organization::where('id', $orgId)->exists()) {
             return $orgId;
+        }
+
+        // Check if reservation provides organization
+        $reservationId = $request->input('reservation_id');
+        if ($reservationId) {
+            $resOrgId = Reservation::where('id', $reservationId)->value('organization_id');
+            if ($resOrgId) {
+                return $resOrgId;
+            }
         }
 
         // Check if first item product warehouse provides organization

@@ -38,7 +38,7 @@
 ---
 
 ## Phase 4: Order Lifecycle & Payment Webhooks
-- [ ] **Task 4.1:** Implement Order creation service bound to active reservations. 🔴
+- [x] **Task 4.1:** Implement Order creation service bound to active reservations. 🟢
 - [ ] **Task 4.2:** Build Stripe integration service (PaymentIntent creation in test mode). 🔴
 - [ ] **Task 4.3:** Build Stripe Webhook receiver with signature validation. 🔴
 - [ ] **Task 4.4:** Implement Webhook deduplication using `payment_webhook_events` table. 🔴

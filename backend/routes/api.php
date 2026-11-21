@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\InventoryController;
+use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ReservationController;
 use App\Http\Controllers\Api\V1\WarehouseController;
@@ -26,4 +27,9 @@ Route::prefix('v1')->group(function () {
     Route::post('/reservations/pessimistic', [ReservationController::class, 'storePessimistic'])->middleware('idempotent');
     Route::post('/reservations/atomic', [ReservationController::class, 'storeAtomic'])->middleware('idempotent');
     Route::get('/reservations/{id}', [ReservationController::class, 'show']);
+
+    // Phase 4: Order Lifecycle
+    Route::post('/orders', [OrderController::class, 'store'])->middleware('idempotent');
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+    Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->middleware('idempotent');
 });
