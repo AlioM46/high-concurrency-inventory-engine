@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\InsufficientStockException;
+use App\Jobs\ExpireReservationJob;
 use App\Models\ProductWarehouse;
 use App\Models\Reservation;
 use App\Models\ReservationItem;
@@ -102,10 +103,8 @@ class AtomicUpdateReservationService implements ReservationServiceInterface
                 ]);
             }
 
-            // Dispatch ExpireReservationJob if the class exists (Task 3.7)
-            if (class_exists(\App\Jobs\ExpireReservationJob::class)) {
-                \App\Jobs\ExpireReservationJob::dispatch($reservation->id)->delay($expiresAt);
-            }
+            // Dispatch ExpireReservationJob with delayed execution matching expires_at TTL
+            ExpireReservationJob::dispatch($reservation->id)->delay($expiresAt);
 
             return $reservation->load(['items.productWarehouse.product']);
         });
