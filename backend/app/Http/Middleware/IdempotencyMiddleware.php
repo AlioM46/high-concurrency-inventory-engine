@@ -81,6 +81,28 @@ class IdempotencyMiddleware
         }
 
         // 5. Distributed Concurrency Lock via Redis (prevent microsecond race conditions)
+        // =========================================================================================
+        // لماذا نستخدم قفل Redis الموزع هنا رغم وجود جدول idempotency_keys في PostgreSQL؟
+        // الحالات الأربع الأساسية (Use Cases):
+        //
+        // 1) سباق أجزاء الميكروثانية (Microsecond Insert Race):
+        //    - إذا وصل طلبان بنفس المفتاح في نفس الميكروثانية، كلاهما سيبحث في DB في الخطوة 4 ويجد null!
+        //    - بدون Redis: سيحاول كلاهما كتابة السجل في DB، وينهار أحدهما بخطأ SQL عنيف (UniqueConstraintViolation).
+        //    - مع Redis: ينفذ أمر 'SET ... NX' في الرام بجزء من النانوثانية؛ فيحصل الأول على true ويمر،
+        //      ويحصل الثاني فوراً على false ويُرفض بـ 409 Conflict دون حتى إرهاق قاعدة البيانات.
+        //
+        // 2) حماية قاعدة البيانات من الاستنزاف (Connection Pool Protection):
+        //    - إذا نقر المستخدم أو روبوت 50 مرة في ثانية واحدة بنفس المفتاح، يمتص Redis جميع النقرات
+        //      في الذاكرة (RAM)، ويمنع تشكيل 50 اتصالاً متزامناً يرهق معالج وقرص PostgreSQL.
+        //
+        // 3) القفل الموزع بين خوادم متعددة (Distributed Mutex Across Multi-Servers):
+        //    - في بيئات الإنتاج (Load Balancer خلفه خوادم متعددة Server A و Server B):
+        //      عمليات الـ PHP معزولة في الذاكرة (Process Isolation)، و Redis هو المرجع المركزي الموحد بينها.
+        //
+        // 4) لماذا مهلة 30 ثانية تحديداً؟ (Emergency TTL / Self-Destruct Timeout):
+        //    - صمام أمان للطوارئ؛ إذا تعطل السيرفر أو انقطعت الكهرباء فجأة أثناء المعالجة (Server Crash)،
+        //      يتبخر القفل تلقائياً بعد 30 ثانية منعاً لبقائه كـ "قفل يتيم" (Orphan Lock) يجمد المفتاح للأبد.
+        // =========================================================================================
         $lockKey = "idempotency_lock:{$idempotencyKey}";
         $lock = Cache::lock($lockKey, 30);
 
