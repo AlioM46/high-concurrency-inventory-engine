@@ -25,15 +25,15 @@
 
 ---
 
-## Phase 3: The Concurrency Reservation Engine (Core)
+## Phase 3: The Concurrency Reservation Engine (Core) - [100% COMPLETED 🟢]
 - [x] **Task 3.1:** Implement Standard API Architecture (`ApiResponse` Trait) & Core Read APIs (Products, Warehouses, Inventory). 🟢
 - [x] **Task 3.2:** Implement Double-Entry `StockMovement` ledger service (`StockMovementService`) with row-level pessimistic locking (`lockForUpdate`). 🟢
 - [x] **Task 3.3:** Build Stock Inward/Adjustment API with ledger tracking (`POST /api/v1/inventory/adjustments`). 🟢
 - [x] **Task 3.4:** Implement Concurrency Strategy A: Pessimistic Locking (`lockForUpdate` with deterministic sorted ID locks). 🟢
 - [x] **Task 3.5:** Implement Concurrency Strategy B: Atomic Conditional Update (`UPDATE ... WHERE available >= qty`). 🟢
-- [ ] **Task 3.6:** Implement `IdempotencyMiddleware` supporting `Idempotency-Key` and request payload hashing. 🔴
-- [ ] **Task 3.7:** Implement Reservation Expiry Queue Job (Redis delayed dispatch for 10-minute TTL). 🔴
-- [ ] **Task 3.8:** Write Pest/PHPUnit unit & integration tests for single-unit and multi-unit reservation claims under concurrency. 🔴
+- [x] **Task 3.6:** Implement `IdempotencyMiddleware` supporting `Idempotency-Key` and request payload hashing. 🟢
+- [x] **Task 3.7:** Implement Reservation Expiry Queue Job (Redis delayed dispatch for 10-minute TTL). 🟢
+- [x] **Task 3.8:** Write Pest/PHPUnit unit & integration tests for single-unit and multi-unit reservation claims under concurrency. 🟢
 
 ---
 

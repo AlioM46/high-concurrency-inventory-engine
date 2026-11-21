@@ -47,7 +47,13 @@ class ExpireReservationJob implements ShouldQueue
                 return;
             }
 
+            // هامش التسامح: 5 ثواني, لماذا: قد يكون هناك مشكلة بتوقيت السيرفرات ( مل من الثواني)
             // 3. TTL guard: do not expire prematurely if expires_at is still in the future
+
+            // NOTE: the worker runs only 1 time per dispatch, so if for some reasons the worker called earlier by 5 seconds, the +5 secodns we add fix this.
+
+            // expires_at = 12:10:00,                   currentTime = now() + 5sec = 12:09:59 + 5 = 12:10:04
+            // is curentTime + 5sec Greater than expiredAt?
             if ($reservation->expires_at && $reservation->expires_at->greaterThan(now()->addSeconds(5))) {
                 Log::info("ExpireReservationJob: Reservation [{$this->reservationId}] expires at {$reservation->expires_at->toIso8601String()} which is still active. Skipping.");
                 return;
