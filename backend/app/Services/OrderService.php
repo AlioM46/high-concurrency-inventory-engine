@@ -28,12 +28,30 @@ class OrderService
     public function createFromReservation(array $data): Order
     {
         return DB::transaction(function () use ($data) {
-            // 1. Lock the reservation row with items and product warehouse to prevent concurrent binds
+            // 1. Lock the reservation row with items and product warehouse to prevent concurrent binds.
+            // =========================================================================================
+            // لماذا نحتاج lockForUpdate() هنا؟ لحماية النظام من كارثتين متزامنتين (Two Race Conditions):
+            //
+            // [السيناريو الأول: خطر إنشاء طلبين لنفس الحجز (Double-Ordering Race)]
+            // - لماذا لا يكفي الـ Idempotency-Key وحده؟
+            //   لأن العميل قد يضغط لإتمام الطلب من "تطبيق الجوال" و"متصفح الويب" (أو جهاز آخر) في نفس اللحظة؛
+            //   كل جهاز يولد مفتاح Idempotency UUID مختلف تماماً، لكن كلاهما يطلبان نفس الـ reservation_id!
+            // - بدون lockForUpdate(): المعالجان (Worker 1 و Worker 2) يقرآن الحجز في نفس الميكروثانية،
+            //   وكلاهما يجدان أن الحجز ACTIVE ولا يوجد له طلب سابق، فينشئ كلاهما طلبين رسميين (ORD-001 و ORD-002)
+            //   لنفس السلعة المحجوزة مرة واحدة فقط!
+            // - مع lockForUpdate(): تضع PostgreSQL قفلاً حصرياً، فينتظر الطلب الثاني في الطابور حتى ينتهي الأول،
+            //   ثم يُرفض الطلب الثاني فوراً بكود 409 RESERVATION_ALREADY_ORDERED.
+            //
+            // [السيناريو الثاني: سباق اللحظة الأخيرة بين الطلب وعامل انتهاء الصلاحية (Order vs Expiry Race)]
+            // - عند الدقيقة 09:59 (قبل انتهاء صلاحية الـ TTL بثانية):
+            //   العميل يضغط لإنشاء الطلب، وفي نفس الجزء من الثانية يبدأ ExpireReservationJob لإلغاء الحجز.
+            // - بدون قفل: قد يُلغى الحجز ويُباع المخزون لعميل آخر بينما OrderService ينشئ طلباً لمخزون غير متوفر!
+            // - مع القفل: يُجبر أحدهما على الانتظار حتى تنتهي المعاملة السابقة، حمايةً لسلامة المخزون والدفتر.
+            // =========================================================================================
             $reservation = Reservation::with(['items.productWarehouse'])
                 ->where('id', $data['reservation_id'])
                 ->lockForUpdate()
                 ->first();
-
             if (! $reservation) {
                 throw new InvalidReservationException(
                     message: "Reservation [{$data['reservation_id']}] not found.",

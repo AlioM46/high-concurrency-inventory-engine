@@ -22,7 +22,7 @@ class CreateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'reservation_id' => ['required', 'uuid'],
+            'reservation_id' => ['required', 'uuid',"exists:reservations,id"],
             'customer_email' => ['required', 'email', 'max:255'],
             'currency' => ['nullable', 'string', 'size:3'],
         ];
