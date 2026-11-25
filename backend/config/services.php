@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET', 'sk_test_mock_secret_key_for_testing'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', 'whsec_mock_webhook_secret_key'),
+    ],
+
 ];
