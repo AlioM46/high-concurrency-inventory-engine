@@ -3,8 +3,10 @@
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\InventoryController;
 use App\Http\Controllers\Api\V1\OrderController;
+use App\Http\Controllers\Api\V1\OrderPaymentController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ReservationController;
+use App\Http\Controllers\Api\V1\StripeWebhookController;
 use App\Http\Controllers\Api\V1\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,8 +30,10 @@ Route::prefix('v1')->group(function () {
     Route::post('/reservations/atomic', [ReservationController::class, 'storeAtomic'])->middleware('idempotent');
     Route::get('/reservations/{id}', [ReservationController::class, 'show']);
 
-    // Phase 4: Order Lifecycle
+    // Phase 4: Order Lifecycle & Payments
     Route::post('/orders', [OrderController::class, 'store'])->middleware('idempotent');
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->middleware('idempotent');
+    Route::post('/orders/{id}/payments/stripe-intent', [OrderPaymentController::class, 'createStripeIntent'])->middleware('idempotent');
+    Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle']);
 });
