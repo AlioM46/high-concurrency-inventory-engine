@@ -3,45 +3,44 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\Payment\StripeWebhookProcessor;
 use App\Services\Payment\StripeWebhookSignatureVerifier;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class StripeWebhookController extends Controller
 {
     use ApiResponse;
 
     public function __construct(
-        protected StripeWebhookSignatureVerifier $signatureVerifier
+        protected StripeWebhookSignatureVerifier $signatureVerifier,
+        protected StripeWebhookProcessor $webhookProcessor
     ) {}
 
     /**
-     * Handle incoming Stripe webhook requests with cryptographic signature verification.
+     * Handle incoming Stripe webhook requests with cryptographic signature verification and deduplication.
      */
+
     public function handle(Request $request): JsonResponse
     {
-        // get the RawBody (not converting the incoming request to array or change its shape, because this affects the hashing result)
+        // 1. Get raw payload (unparsed body string required for exact HMAC calculation)
         $payload = $request->getContent();
         $signatureHeader = $request->header('Stripe-Signature');
 
-        // Verify HMAC-SHA256 signature and replay tolerance
+        // 2. Cryptographic signature and replay attack verification
         $verifiedData = $this->signatureVerifier->verify($payload, $signatureHeader);
 
-        $event = $verifiedData['payload'];
-        $eventType = $event['type'] ?? 'unknown';
-        $eventId = $event['id'] ?? 'unknown';
+        // 3. Deduplicate and ingest event via payment_webhook_events
+        $result = $this->webhookProcessor->process($verifiedData['payload']);
 
-        Log::info("Stripe Webhook received and signature verified: [{$eventType}] (ID: {$eventId})");
+        $message = $result['is_duplicate']
+            ? 'Webhook event already processed (idempotent duplicate).'
+            : 'Webhook received and processed successfully.';
 
         return $this->successResponse(
-            data: [
-                'event_id' => $eventId,
-                'event_type' => $eventType,
-                'verified' => true,
-            ],
-            message: 'Webhook received and verified successfully.',
+            data: $result,
+            message: $message,
             statusCode: 200
         );
     }
