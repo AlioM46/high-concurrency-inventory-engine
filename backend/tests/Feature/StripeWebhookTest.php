@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Services\Payment\StripeWebhookSignatureVerifier;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class StripeWebhookTest extends TestCase
 {
+    use RefreshDatabase;
     private string $webhookSecret = 'whsec_test_secret_for_automated_testing_12345';
     private StripeWebhookSignatureVerifier $verifier;
 
@@ -55,7 +57,7 @@ class StripeWebhookTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.verified', true)
+            ->assertJsonPath('data.is_duplicate', false)
             ->assertJsonPath('data.event_type', 'payment_intent.succeeded')
             ->assertJsonPath('data.event_id', 'evt_test_payment_succeeded_001');
     }
