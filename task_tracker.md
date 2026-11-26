@@ -41,8 +41,8 @@
 - [x] **Task 4.1:** Implement Order creation service bound to active reservations. 🟢
 - [x] **Task 4.2:** Build Stripe integration service (PaymentIntent creation in test mode). 🟢
 - [x] **Task 4.3:** Build Stripe Webhook receiver with signature validation. 🟢
-- [ ] **Task 4.4:** Implement Webhook deduplication using `payment_webhook_events` table. 🔴
-- [ ] **Task 4.5:** Implement Expiry vs. Payment Race Condition guard (Atomic Compare-and-Swap). 🔴
+- [x] **Task 4.4:** Implement Webhook deduplication using `payment_webhook_events` table. 🟢
+- [x] **Task 4.5:** Implement Expiry vs. Payment Race Condition guard (Atomic Compare-and-Swap). 🟢
 - [ ] **Task 4.6:** Implement automated refund trigger if payment succeeds on an already expired reservation. 🔴
 
 ---
